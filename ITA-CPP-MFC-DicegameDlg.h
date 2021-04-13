@@ -47,4 +47,6 @@ public:
 //	int V_Balanace;
 	int V_Balance;
 	int V_Guess;
+	CEdit BTN_Guess;
+	int paused;
 };

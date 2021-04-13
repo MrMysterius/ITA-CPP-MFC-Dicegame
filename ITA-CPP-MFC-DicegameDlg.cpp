@@ -58,6 +58,7 @@ CITACPPMFCDicegameDlg::CITACPPMFCDicegameDlg(CWnd* pParent /*=nullptr*/)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	Balance = 0;
+	paused = 0;
 }
 
 void CITACPPMFCDicegameDlg::DoDataExchange(CDataExchange* pDX)
@@ -71,6 +72,7 @@ void CITACPPMFCDicegameDlg::DoDataExchange(CDataExchange* pDX)
 	//  DDX_Text(pDX, I_Balance, V_Balanace);
 	DDX_Text(pDX, I_Balance, V_Balance);
 	DDX_Text(pDX, I_Guess, V_Guess);
+	DDX_Control(pDX, I_Guess, BTN_Guess);
 }
 
 BEGIN_MESSAGE_MAP(CITACPPMFCDicegameDlg, CDialogEx)
@@ -120,6 +122,9 @@ BOOL CITACPPMFCDicegameDlg::OnInitDialog()
 	srand(time(NULL));
 	V_Balance = Balance;
 	UpdateData(0);
+	paused = 1;
+	BTN_Guess.SetWindowTextW(NULL);
+	BTN_Guess.SetFocus();
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
@@ -205,7 +210,7 @@ void CITACPPMFCDicegameDlg::OnBnClickedRoll()
 	B_Controll.EnableWindow(false);
 	UpdateData();
 	int rnd = 0;
-	int counter = (rand() % 100 + 1) * (rand() % 100 + 1);
+	int counter = (rand() % 50 + 1) * (rand() % 50 + 1);
 	for (int i = 0; i < counter; i++) {
 		rnd = rand() % 6 + 1;
 		load(rnd, BMP_Control, BMP_Loader);
@@ -217,14 +222,17 @@ void CITACPPMFCDicegameDlg::OnBnClickedRoll()
 		Balance -= 1;
 	}
 	V_Balance = Balance;
+	paused = 1;
+	BTN_Guess.SetFocus();
 	UpdateData(0);
 }
 
 
 void CITACPPMFCDicegameDlg::OnEnChangeGuess()
 {
+	if (paused-- >= 1) return;
 	UpdateData();
-	if (0 < V_Guess && V_Guess < 7) {
+	if (0 < V_Guess && V_Guess < 7 && Balance > 0) {
 		B_Controll.EnableWindow(true);
 	}
 	else {
